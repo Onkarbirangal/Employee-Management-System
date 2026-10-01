@@ -14,11 +14,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-ems-production-ready-secret-key-replace-in-production'
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
-
+ALLOWED_HOSTS = [
+    '127.0.0.1',
+    'localhost',
+    'employee-management-system-1-bd9y.onrender.com',
+]
 
 # Application definition
 
