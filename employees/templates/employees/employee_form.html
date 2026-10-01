@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+{% block title %}{{ title }} - EMS Portal{% endblock %}
+
+{% block content %}
+<div class="container-fluid max-w-900 p-0">
+    <div class="d-flex align-items-center justify-content-between mb-4">
+        <div>
+            <h4 class="fw-bold mb-1">{{ title }}</h4>
+            <p class="text-muted small mb-0">Enter staff personal, contact, and employment data</p>
+        </div>
+        <a href="{% url 'employee_list' %}" class="btn btn-outline-secondary btn-sm">
+            <i class="bi bi-arrow-left me-1"></i>Back
+        </a>
+    </div>
+
+    <div class="card shadow-sm border-0">
+        <div class="card-body p-4">
+            <form method="post" enctype="multipart/form-data" novalidate>
+                {% csrf_token %}
+
+                <!-- Section: Account Credentials (on creation) -->
+                {% if form.username %}
+                <h6 class="fw-bold text-primary mb-3 pb-2 border-bottom"><i class="bi bi-shield-lock me-2"></i>User Credentials</h6>
+                <div class="row g-3 mb-4">
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold required">Username</label>
+                        {{ form.username }}
+                        {% if form.username.errors %}<div class="text-danger small mt-1">{{ form.username.errors|striptags }}</div>{% endif %}
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold required">Work Email</label>
+                        {{ form.email }}
+                        {% if form.email.errors %}<div class="text-danger small mt-1">{{ form.email.errors|striptags }}</div>{% endif %}
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold required">Password</label>
+                        {{ form.password }}
+                        {% if form.password.errors %}<div class="text-danger small mt-1">{{ form.password.errors|striptags }}</div>{% endif %}
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Section: Personal Information -->
+                <h6 class="fw-bold text-primary mb-3 pb-2 border-bottom"><i class="bi bi-person me-2"></i>Personal Details</h6>
+                <div class="row g-3 mb-4">
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold required">First Name</label>
+                        {{ form.first_name }}
+                        {% if form.first_name.errors %}<div class="text-danger small mt-1">{{ form.first_name.errors|striptags }}</div>{% endif %}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold required">Last Name</label>
+                        {{ form.last_name }}
+                        {% if form.last_name.errors %}<div class="text-danger small mt-1">{{ form.last_name.errors|striptags }}</div>{% endif %}
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold">Phone Number</label>
+                        {{ form.phone }}
+                        {% if form.phone.errors %}<div class="text-danger small mt-1">{{ form.phone.errors|striptags }}</div>{% endif %}
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold">Date of Birth</label>
+                        {{ form.date_of_birth }}
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold">Gender</label>
+                        {{ form.gender }}
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label fw-semibold">Residential Address</label>
+                        {{ form.address }}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">Profile Picture</label>
+                        {{ form.profile_picture }}
+                        {% if form.profile_picture.errors %}<div class="text-danger small mt-1">{{ form.profile_picture.errors|striptags }}</div>{% endif %}
+                    </div>
+                </div>
+
+                <!-- Section: Employment & Company Details -->
+                <h6 class="fw-bold text-primary mb-3 pb-2 border-bottom"><i class="bi bi-briefcase me-2"></i>Employment Details</h6>
+                <div class="row g-3 mb-4">
+                    {% if form.employee_id %}
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold required">Employee ID</label>
+                        {{ form.employee_id }}
+                        {% if form.employee_id.errors %}<div class="text-danger small mt-1">{{ form.employee_id.errors|striptags }}</div>{% endif %}
+                    </div>
+                    {% endif %}
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold">Department</label>
+                        {{ form.department }}
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold">Designation</label>
+                        {{ form.designation }}
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label fw-semibold">Joining Date</label>
+                        {{ form.joining_date }}
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label fw-semibold required">Basic Salary (₹)</label>
+                        {{ form.basic_salary }}
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label fw-semibold required">System Role</label>
+                        {{ form.role }}
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label fw-semibold required">Account Status</label>
+                        {{ form.status }}
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-end gap-2 pt-3 border-top">
+                    <a href="{% url 'employee_list' %}" class="btn btn-light px-4">Cancel</a>
+                    <button type="submit" class="btn btn-primary px-4">{{ btn_text }}</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

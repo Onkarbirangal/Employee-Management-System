@@ -1,0 +1,177 @@
+{% extends "base.html" %}
+{% block title %}Employees - EMS Portal{% endblock %}
+
+{% block content %}
+<div class="container-fluid p-0">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center pb-3 mb-4 border-bottom gap-2">
+        <div>
+            <h3 class="fw-bold mb-1">Employee Directory</h3>
+            <p class="text-muted small mb-0">Search, filter, and manage staff members</p>
+        </div>
+        <a href="{% url 'employee_add' %}" class="btn btn-primary btn-sm">
+            <i class="bi bi-person-plus me-1"></i>Add Employee
+        </a>
+    </div>
+
+    <!-- Search & Filter Bar -->
+    <div class="card shadow-sm border-0 mb-4">
+        <div class="card-body p-3">
+            <form method="get" class="row g-2 align-items-center">
+                <div class="col-md-4">
+                    <div class="input-group">
+                        <span class="input-group-text bg-light border-end-0"><i class="bi bi-search text-muted"></i></span>
+                        <input type="text" name="q" class="form-control border-start-0" placeholder="Search by ID, name, email, phone..." value="{{ query }}">
+                    </div>
+                </div>
+                <div class="col-sm-6 col-md-2">
+                    <select name="department" class="form-select">
+                        <option value="">All Departments</option>
+                        {% for dept in departments %}
+                            <option value="{{ dept.id }}" {% if selected_dept == dept.id|stringformat:"s" %}selected{% endif %}>{{ dept.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-sm-6 col-md-2">
+                    <select name="role" class="form-select">
+                        <option value="">All Roles</option>
+                        <option value="ADMIN" {% if selected_role == 'ADMIN' %}selected{% endif %}>Admin</option>
+                        <option value="HR" {% if selected_role == 'HR' %}selected{% endif %}>HR</option>
+                        <option value="EMPLOYEE" {% if selected_role == 'EMPLOYEE' %}selected{% endif %}>Employee</option>
+                    </select>
+                </div>
+                <div class="col-sm-6 col-md-2">
+                    <select name="status" class="form-select">
+                        <option value="">All Statuses</option>
+                        <option value="ACTIVE" {% if selected_status == 'ACTIVE' %}selected{% endif %}>Active</option>
+                        <option value="INACTIVE" {% if selected_status == 'INACTIVE' %}selected{% endif %}>Inactive</option>
+                    </select>
+                </div>
+                <div class="col-sm-6 col-md-2 d-flex gap-2">
+                    <button type="submit" class="btn btn-secondary w-100">Filter</button>
+                    <a href="{% url 'employee_list' %}" class="btn btn-outline-secondary" title="Reset Filters"><i class="bi bi-arrow-counterclockwise"></i></a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Employee Table -->
+    <div class="card shadow-sm border-0">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th class="ps-4">Employee</th>
+                            <th>ID</th>
+                            <th>Department</th>
+                            <th>Designation</th>
+                            <th>Role</th>
+                            <th>Status</th>
+                            <th class="text-end pe-4">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for emp in page_obj %}
+                        <tr>
+                            <td class="ps-4">
+                                <div class="d-flex align-items-center">
+                                    {% if emp.profile_picture %}
+                                        <img src="{{ emp.profile_picture.url }}" class="avatar-sm me-3" alt="{{ emp.full_name }}">
+                                    {% else %}
+                                        {% load static %}
+                                        <img src="{% static 'images/default-avatar.svg' %}" class="avatar-sm me-3" alt="Avatar">
+                                    {% endif %}
+                                    <div>
+                                        <a href="{% url 'employee_detail' emp.pk %}" class="fw-bold text-dark text-decoration-none d-block">
+                                            {{ emp.full_name }}
+                                        </a>
+                                        <span class="text-muted small">{{ emp.email }}</span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="fw-semibold text-muted small">{{ emp.employee_id }}</td>
+                            <td>{{ emp.department.name|default:"—" }}</td>
+                            <td>{{ emp.designation.title|default:"—" }}</td>
+                            <td>
+                                {% if emp.role == 'ADMIN' %}
+                                    <span class="badge bg-danger-subtle text-danger">Admin</span>
+                                {% elif emp.role == 'HR' %}
+                                    <span class="badge bg-warning-subtle text-dark">HR</span>
+                                {% else %}
+                                    <span class="badge bg-info-subtle text-info">Employee</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if emp.status == 'ACTIVE' %}
+                                    <span class="badge bg-success-subtle text-success">Active</span>
+                                {% else %}
+                                    <span class="badge bg-secondary-subtle text-secondary">Inactive</span>
+                                {% endif %}
+                            </td>
+                            <td class="text-end pe-4">
+                                <div class="btn-group btn-group-sm">
+                                    <a href="{% url 'employee_detail' emp.pk %}" class="btn btn-outline-secondary" title="View Profile">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+                                    <a href="{% url 'employee_edit' emp.pk %}" class="btn btn-outline-secondary" title="Edit Profile">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                    {% if user.is_superuser or user.employee.role == 'ADMIN' %}
+                                    <a href="{% url 'employee_delete' emp.pk %}" class="btn btn-outline-danger" title="Delete">
+                                        <i class="bi bi-trash"></i>
+                                    </a>
+                                    {% endif %}
+                                </div>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="7" class="text-center py-5">
+                                <div class="empty-state">
+                                    <i class="bi bi-people empty-state-icon"></i>
+                                    <h5 class="fw-bold">No Employees Found</h5>
+                                    <p class="text-muted small">No records match your search criteria.</p>
+                                    <a href="{% url 'employee_add' %}" class="btn btn-primary btn-sm">Add First Employee</a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Pagination -->
+        {% if page_obj.has_other_pages %}
+        <div class="card-footer bg-white border-top d-flex justify-content-between align-items-center py-3">
+            <span class="text-muted small">
+                Showing page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+            </span>
+            <nav>
+                <ul class="pagination pagination-sm mb-0">
+                    {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}&q={{ query }}&department={{ selected_dept }}&role={{ selected_role }}&status={{ selected_status }}">Previous</a>
+                    </li>
+                    {% endif %}
+
+                    {% for num in page_obj.paginator.page_range %}
+                        {% if page_obj.number == num %}
+                            <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                            <li class="page-item"><a class="page-link" href="?page={{ num }}&q={{ query }}&department={{ selected_dept }}&role={{ selected_role }}&status={{ selected_status }}">{{ num }}</a></li>
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if page_obj.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.next_page_number }}&q={{ query }}&department={{ selected_dept }}&role={{ selected_role }}&status={{ selected_status }}">Next</a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

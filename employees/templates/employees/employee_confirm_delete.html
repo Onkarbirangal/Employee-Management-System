@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Delete Employee - EMS Portal{% endblock %}
+
+{% block content %}
+<div class="container-fluid max-w-700 py-4 text-center">
+    <div class="card shadow-sm border-0 border-top border-danger border-4">
+        <div class="card-body p-5">
+            <div class="text-danger mb-3">
+                <i class="bi bi-person-x fs-1"></i>
+            </div>
+            <h4 class="fw-bold">Delete Employee Record?</h4>
+            <p class="text-muted mb-4">
+                Are you sure you want to permanently delete <strong>{{ employee.full_name }} ({{ employee.employee_id }})</strong>?<br>
+                All associated attendance, leave, and payroll records will also be removed.
+            </p>
+
+            <form method="post">
+                {% csrf_token %}
+                <div class="d-flex justify-content-center gap-2">
+                    <a href="{% url 'employee_list' %}" class="btn btn-light px-4">Cancel</a>
+                    <button type="submit" class="btn btn-danger px-4">Yes, Delete Employee</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

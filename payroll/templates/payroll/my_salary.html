@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block title %}My Salary Slips - EMS Portal{% endblock %}
+
+{% block content %}
+<div class="container-fluid p-0">
+    <div class="d-flex justify-content-between align-items-center pb-3 mb-4 border-bottom">
+        <div>
+            <h3 class="fw-bold mb-1">My Payslip Ledger</h3>
+            <p class="text-muted small mb-0">Review monthly compensation histories and download payslips</p>
+        </div>
+    </div>
+
+    <div class="card shadow-sm border-0">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th class="ps-4">Payment Cycle</th>
+                            <th>Basic Salary</th>
+                            <th>Allowances</th>
+                            <th>Deductions</th>
+                            <th>Net Disbursed</th>
+                            <th>Status</th>
+                            <th>Date</th>
+                            <th class="text-end pe-4">Slip</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for salary in page_obj %}
+                        <tr>
+                            <td class="ps-4 fw-bold">{{ salary.month }}/{{ salary.year }}</td>
+                            <td>₹{{ salary.basic_salary|floatformat:2 }}</td>
+                            <td class="text-success">+₹{{ salary.allowance|add:salary.bonus|floatformat:2 }}</td>
+                            <td class="text-danger">-₹{{ salary.deduction|floatformat:2 }}</td>
+                            <td class="fw-bold text-dark">₹{{ salary.net_salary|floatformat:2 }}</td>
+                            <td>
+                                {% if salary.payment_status == 'PAID' %}
+                                    <span class="badge bg-success-subtle text-success">Paid</span>
+                                {% else %}
+                                    <span class="badge bg-warning-subtle text-warning">Pending</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ salary.payment_date|date:"d M, Y"|default:"—" }}</td>
+                            <td class="text-end pe-4">
+                                <a href="{% url 'salary_detail' salary.pk %}" class="btn btn-outline-primary btn-sm">
+                                    <i class="bi bi-printer me-1"></i>View Slip
+                                </a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="8" class="text-center py-5 text-muted">
+                                No payroll records have been generated for your profile yet.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

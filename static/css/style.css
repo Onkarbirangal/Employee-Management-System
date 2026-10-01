@@ -1,0 +1,116 @@
+/* ==========================================================================
+   Employee Management System - Custom Dashboard Styling
+   ========================================================================== */
+
+:root {
+    --ems-primary: #0d6efd;
+    --ems-dark: #212529;
+    --ems-sidebar-bg: #ffffff;
+    --ems-sidebar-width: 250px;
+    --ems-card-radius: 10px;
+}
+
+body {
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    color: #333333;
+    background-color: #f8f9fa;
+}
+
+/* Sidebar Wrapper */
+.sidebar-wrapper {
+    min-height: calc(100vh - 56px);
+    border-right: 1px solid #e9ecef;
+    background-color: var(--ems-sidebar-bg);
+}
+
+.sidebar-wrapper .nav-link {
+    font-size: 0.92rem;
+    font-weight: 500;
+    color: #495057;
+    border-radius: 6px;
+    transition: all 0.2s ease-in-out;
+}
+
+.sidebar-wrapper .nav-link:hover {
+    background-color: #f1f3f5;
+    color: var(--ems-primary);
+}
+
+.sidebar-wrapper .nav-link.active {
+    background-color: #e7f1ff;
+    color: var(--ems-primary);
+    font-weight: 600;
+}
+
+/* Card Enhancements */
+.card {
+    border-radius: var(--ems-card-radius);
+    border: 1px solid #edf2f9;
+    transition: transform 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.card-stat {
+    border-left: 4px solid var(--ems-primary);
+}
+
+.card-stat:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.08) !important;
+}
+
+/* Data Tables */
+.table thead th {
+    font-size: 0.82rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #6c757d;
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.table tbody td {
+    vertical-align: middle;
+    font-size: 0.92rem;
+}
+
+/* Status Badges */
+.badge-status {
+    padding: 0.35em 0.65em;
+    font-weight: 600;
+    font-size: 0.78rem;
+    letter-spacing: 0.02em;
+}
+
+/* Profile Photo Display */
+.avatar-preview {
+    width: 110px;
+    height: 110px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 3px solid #dee2e6;
+}
+
+.avatar-sm {
+    width: 38px;
+    height: 38px;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+/* Empty State Containers */
+.empty-state {
+    padding: 3rem 1.5rem;
+    text-align: center;
+}
+
+.empty-state-icon {
+    font-size: 3rem;
+    color: #adb5bd;
+    margin-bottom: 1rem;
+}
+
+/* Form Styling & Required Indicators */
+.form-label.required::after {
+    content: " *";
+    color: #dc3545;
+}

@@ -1,0 +1,173 @@
+{% extends "base.html" %}
+{% block title %}Admin Dashboard - EMS Portal{% endblock %}
+
+{% block content %}
+<div class="container-fluid p-0">
+    <!-- Welcome Header -->
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center pb-3 mb-4 border-bottom gap-2">
+        <div>
+            <h3 class="fw-bold mb-1">Executive Dashboard</h3>
+            <p class="text-muted small mb-0">System-wide operational overview and controls</p>
+        </div>
+        <div class="d-flex gap-2">
+            <a href="{% url 'employee_add' %}" class="btn btn-primary btn-sm">
+                <i class="bi bi-person-plus me-1"></i>Add Employee
+            </a>
+            <a href="{% url 'department_add' %}" class="btn btn-outline-secondary btn-sm">
+                <i class="bi bi-building me-1"></i>New Dept
+            </a>
+        </div>
+    </div>
+
+    <!-- Stat Metrics Row -->
+    <div class="row g-3 mb-4">
+        <div class="col-sm-6 col-xl-3">
+            <div class="card card-stat shadow-sm border-0 h-100" style="border-left-color: #0d6efd !important;">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <span class="text-muted text-uppercase fw-semibold small">Employees</span>
+                            <h3 class="fw-bold my-1 text-dark">{{ total_employees }}</h3>
+                            <span class="badge bg-success-subtle text-success">{{ active_employees }} Active</span>
+                        </div>
+                        <div class="bg-primary-subtle text-primary p-3 rounded-circle">
+                            <i class="bi bi-people fs-4"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-xl-3">
+            <div class="card card-stat shadow-sm border-0 h-100" style="border-left-color: #198754 !important;">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <span class="text-muted text-uppercase fw-semibold small">Present Today</span>
+                            <h3 class="fw-bold my-1 text-dark">{{ present_today }}</h3>
+                            <span class="text-danger small">{{ absent_today }} Absent</span>
+                        </div>
+                        <div class="bg-success-subtle text-success p-3 rounded-circle">
+                            <i class="bi bi-calendar-check fs-4"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-xl-3">
+            <div class="card card-stat shadow-sm border-0 h-100" style="border-left-color: #ffc107 !important;">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <span class="text-muted text-uppercase fw-semibold small">Pending Leaves</span>
+                            <h3 class="fw-bold my-1 text-dark">{{ pending_leaves }}</h3>
+                            <span class="text-muted small">{{ approved_leaves }} Approved</span>
+                        </div>
+                        <div class="bg-warning-subtle text-warning p-3 rounded-circle">
+                            <i class="bi bi-calendar2-range fs-4"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-xl-3">
+            <div class="card card-stat shadow-sm border-0 h-100" style="border-left-color: #0dcaf0 !important;">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <span class="text-muted text-uppercase fw-semibold small">Monthly Payroll</span>
+                            <h3 class="fw-bold my-1 text-dark">₹{{ monthly_payroll_total|floatformat:0 }}</h3>
+                            <span class="text-muted small">{{ total_departments }} Departments</span>
+                        </div>
+                        <div class="bg-info-subtle text-info p-3 rounded-circle">
+                            <i class="bi bi-cash-stack fs-4"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Data Tables Grid -->
+    <div class="row g-4">
+        <!-- Pending Leave Requests -->
+        <div class="col-lg-6">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                    <h6 class="fw-bold mb-0 text-dark"><i class="bi bi-hourglass-split me-2 text-warning"></i>Pending Leave Requests</h6>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Employee</th>
+                                    <th>Type</th>
+                                    <th>Days</th>
+                                    <th class="text-end">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for leave in recent_leaves %}
+                                <tr>
+                                    <td class="fw-semibold">{{ leave.employee.full_name }}</td>
+                                    <td><span class="badge bg-secondary-subtle text-dark">{{ leave.get_leave_type_display }}</span></td>
+                                    <td>{{ leave.total_days }} day(s)</td>
+                                    <td class="text-end">
+                                        <button class="btn btn-outline-primary btn-sm py-0 px-2">Review</button>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="4" class="text-center py-4 text-muted">
+                                        <i class="bi bi-check2-circle fs-3 d-block text-success mb-1"></i>No pending leave requests
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recently Joined Employees -->
+        <div class="col-lg-6">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                    <h6 class="fw-bold mb-0 text-dark"><i class="bi bi-person-badge me-2 text-primary"></i>Recently Joined Staff</h6>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Department</th>
+                                    <th>Role</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for emp in recent_employees %}
+                                <tr>
+                                    <td class="fw-bold text-muted small">{{ emp.employee_id }}</td>
+                                    <td class="fw-semibold">{{ emp.full_name }}</td>
+                                    <td>{{ emp.department.name|default:"Unassigned" }}</td>
+                                    <td><span class="badge bg-info-subtle text-info">{{ emp.role }}</span></td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="4" class="text-center py-4 text-muted">
+                                        <i class="bi bi-inbox fs-3 d-block mb-1"></i>No employees found
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,140 @@
+{% extends "base.html" %}
+{% block title %}My Dashboard - EMS Portal{% endblock %}
+
+{% block content %}
+<div class="container-fluid p-0">
+    <!-- Welcome Header -->
+    <div class="card shadow-sm border-0 mb-4 bg-white rounded-3">
+        <div class="card-body p-4 d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+            <div class="d-flex align-items-center gap-3">
+                <div class="bg-primary-subtle text-primary rounded-circle d-flex justify-content-center align-items-center" style="width: 58px; height: 58px;">
+                    <i class="bi bi-person-badge fs-2"></i>
+                </div>
+                <div>
+                    <h4 class="fw-bold mb-0">Welcome back, {{ employee.full_name }}! 👋</h4>
+                    <p class="text-muted small mb-0">
+                        {{ employee.employee_id }} &bull; 
+                        {{ employee.designation.title|default:"Associate" }} &bull; 
+                        <span class="badge bg-secondary-subtle text-dark">{{ employee.department.name|default:"General" }}</span>
+                    </p>
+                </div>
+            </div>
+            <div class="d-flex gap-2">
+                <a href="#" class="btn btn-primary btn-sm px-3"><i class="bi bi-calendar2-plus me-1"></i>Apply Leave</a>
+                <a href="#" class="btn btn-outline-secondary btn-sm px-3"><i class="bi bi-receipt me-1"></i>My Payslips</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Personal Stats Row -->
+    <div class="row g-3 mb-4">
+        <div class="col-sm-6 col-lg-4">
+            <div class="card card-stat shadow-sm border-0 h-100" style="border-left-color: #198754 !important;">
+                <div class="card-body">
+                    <span class="text-muted text-uppercase fw-semibold small">Today's Attendance</span>
+                    {% if today_attendance %}
+                        <h4 class="fw-bold my-1 text-success"><i class="bi bi-check-circle me-1"></i>{{ today_attendance.get_status_display }}</h4>
+                        <span class="text-muted small">Clock In: {{ today_attendance.check_in|default:"Recorded" }}</span>
+                    {% else %}
+                        <h4 class="fw-bold my-1 text-secondary"><i class="bi bi-dash-circle me-1"></i>Not Marked</h4>
+                        <span class="text-danger small">No clock-in detected today</span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-lg-4">
+            <div class="card card-stat shadow-sm border-0 h-100" style="border-left-color: #ffc107 !important;">
+                <div class="card-body">
+                    <span class="text-muted text-uppercase fw-semibold small">Leave Status</span>
+                    <h4 class="fw-bold my-1 text-dark">{{ my_pending_leaves }} Pending</h4>
+                    <span class="text-success small">{{ my_approved_leaves }} Approved Leaves</span>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-lg-4">
+            <div class="card card-stat shadow-sm border-0 h-100" style="border-left-color: #0dcaf0 !important;">
+                <div class="card-body">
+                    <span class="text-muted text-uppercase fw-semibold small">Latest Salary Slip</span>
+                    {% if latest_salary %}
+                        <h4 class="fw-bold my-1 text-dark">₹{{ latest_salary.net_salary|floatformat:2 }}</h4>
+                        <span class="badge bg-success-subtle text-success">{{ latest_salary.payment_status }} ({{ latest_salary.month }}/{{ latest_salary.year }})</span>
+                    {% else %}
+                        <h4 class="fw-bold my-1 text-muted">—</h4>
+                        <span class="text-muted small">No payroll records generated</span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Personal Overview Tables -->
+    <div class="row g-4">
+        <!-- My Recent Leaves -->
+        <div class="col-lg-7">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                    <h6 class="fw-bold mb-0 text-dark"><i class="bi bi-clock-history me-2 text-primary"></i>My Recent Leave Requests</h6>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Type</th>
+                                    <th>Date Span</th>
+                                    <th>Days</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for leave in recent_leaves %}
+                                <tr>
+                                    <td class="fw-semibold">{{ leave.get_leave_type_display }}</td>
+                                    <td class="small">{{ leave.start_date|date:"d M" }} - {{ leave.end_date|date:"d M" }}</td>
+                                    <td>{{ leave.total_days }}</td>
+                                    <td>
+                                        {% if leave.status == 'APPROVED' %}
+                                            <span class="badge bg-success-subtle text-success">Approved</span>
+                                        {% elif leave.status == 'REJECTED' %}
+                                            <span class="badge bg-danger-subtle text-danger">Rejected</span>
+                                        {% else %}
+                                            <span class="badge bg-warning-subtle text-warning">Pending</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="4" class="text-center py-4 text-muted">You haven't submitted any leave requests yet.</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Notifications -->
+        <div class="col-lg-5">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-header bg-white py-3">
+                    <h6 class="fw-bold mb-0 text-dark"><i class="bi bi-bell me-2 text-warning"></i>Recent Alerts</h6>
+                </div>
+                <div class="card-body p-0">
+                    <ul class="list-group list-group-flush">
+                        {% for n in notifications %}
+                        <li class="list-group-item py-2 px-3">
+                            <div class="fw-semibold small">{{ n.title }}</div>
+                            <div class="text-muted small">{{ n.message }}</div>
+                            <div class="text-muted" style="font-size: 0.72rem;">{{ n.created_at|timesince }} ago</div>
+                        </li>
+                        {% empty %}
+                        <li class="list-group-item text-center text-muted py-4">No unread alerts.</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

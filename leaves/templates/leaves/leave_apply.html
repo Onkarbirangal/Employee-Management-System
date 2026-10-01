@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block title %}Apply for Leave - EMS Portal{% endblock %}
+
+{% block content %}
+<div class="container-fluid max-w-700 p-0">
+    <div class="d-flex align-items-center justify-content-between mb-4">
+        <div>
+            <h4 class="fw-bold mb-1">Apply for Leave</h4>
+            <p class="text-muted small mb-0">Submit an official time-off request for HR approval</p>
+        </div>
+        <a href="{% url 'my_leaves' %}" class="btn btn-outline-secondary btn-sm">
+            <i class="bi bi-clock-history me-1"></i>My History
+        </a>
+    </div>
+
+    <div class="card shadow-sm border-0">
+        <div class="card-body p-4">
+            <form method="post" novalidate>
+                {% csrf_token %}
+
+                {% if form.non_field_errors %}
+                    <div class="alert alert-danger py-2 small mb-3">
+                        {{ form.non_field_errors|striptags }}
+                    </div>
+                {% endif %}
+
+                <div class="mb-3">
+                    <label class="form-label fw-semibold required">Leave Type</label>
+                    {{ form.leave_type }}
+                </div>
+
+                <div class="row g-3 mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold required">Start Date</label>
+                        {{ form.start_date }}
+                        {% if form.start_date.errors %}<div class="text-danger small mt-1">{{ form.start_date.errors|striptags }}</div>{% endif %}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold required">End Date</label>
+                        {{ form.end_date }}
+                        {% if form.end_date.errors %}<div class="text-danger small mt-1">{{ form.end_date.errors|striptags }}</div>{% endif %}
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-semibold required">Reason</label>
+                    {{ form.reason }}
+                    {% if form.reason.errors %}<div class="text-danger small mt-1">{{ form.reason.errors|striptags }}</div>{% endif %}
+                </div>
+
+                <div class="d-flex justify-content-end gap-2 pt-3 border-top">
+                    <a href="{% url 'my_leaves' %}" class="btn btn-light px-4">Cancel</a>
+                    <button type="submit" class="btn btn-primary px-4">Submit Application</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

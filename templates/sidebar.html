@@ -1,0 +1,111 @@
+<div class="d-flex flex-column flex-shrink-0 p-3 bg-white shadow-sm border-end h-100 sidebar-wrapper">
+    <div class="text-uppercase text-muted fw-bold px-2 mb-2" style="font-size: 0.75rem; letter-spacing: 0.05em;">
+        Navigation
+    </div>
+    <ul class="nav nav-pills flex-column mb-auto gap-1">
+        {% if user.is_authenticated %}
+            <!-- Common Dashboard Link -->
+            <li class="nav-item">
+                <a href="{% url 'login_redirect' %}" class="nav-link text-dark py-2 px-3 rounded">
+                    <i class="bi bi-speedometer2 me-2 text-primary"></i> Dashboard
+                </a>
+            </li>
+
+            <!-- Superuser / Admin Role -->
+            {% if user.is_superuser or user.employee.role == 'ADMIN' %}
+                <li class="nav-item">
+                    <a href="{% url 'employee_list' %}" class="nav-link text-dark py-2 px-3 rounded">
+                        <i class="bi bi-people me-2 text-primary"></i> Employees
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'department_list' %}" class="nav-link text-dark py-2 px-3 rounded">
+                        <i class="bi bi-diagram-3 me-2 text-primary"></i> Departments
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'attendance_list' %}" class="nav-link text-dark py-2 px-3 rounded">
+                        <i class="bi bi-calendar-check me-2 text-primary"></i> Attendance
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'leave_list' %}" class="nav-link text-dark py-2 px-3 rounded">
+                        <i class="bi bi-calendar2-range me-2 text-primary"></i> Leave Requests
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'salary_list' %}" class="nav-link text-dark py-2 px-3 rounded">
+                        <i class="bi bi-cash-stack me-2 text-primary"></i> Payroll
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'reports_hub' %}" class="nav-link text-dark py-2 px-3 rounded">
+                        <i class="bi bi-bar-chart-line me-2 text-primary"></i> Reports
+                    </a>
+                </li>
+            
+            <!-- HR / Manager Role -->
+            {% elif user.employee.role == 'HR' %}
+                <li class="nav-item">
+                    <a href="{% url 'employee_list' %}" class="nav-link text-dark py-2 px-3 rounded">
+                        <i class="bi bi-people me-2 text-primary"></i> Employees
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'department_list' %}" class="nav-link text-dark py-2 px-3 rounded">
+                        <i class="bi bi-diagram-3 me-2 text-primary"></i> Departments
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'attendance_list' %}"class="nav-link text-dark py-2 px-3 rounded">
+                        <i class="bi bi-calendar-check me-2 text-primary"></i> Attendance
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'leave_list' %}" class="nav-link text-dark py-2 px-3 rounded">
+                        <i class="bi bi-calendar2-range me-2 text-primary"></i> Leave Requests
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'salary_list' %}" class="nav-link text-dark py-2 px-3 rounded">
+                        <i class="bi bi-cash-stack me-2 text-primary"></i> Payroll
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'reports_hub' %}" class="nav-link text-dark py-2 px-3 rounded">
+                        <i class="bi bi-bar-chart-line me-2 text-primary"></i> Reports
+                    </a>
+                </li>
+
+            <!-- Standard Employee Role -->
+            {% else %}
+                <li class="nav-item">
+                    <a href="{% url 'my_profile' %}" class="nav-link text-dark py-2 px-3 rounded">
+                        <i class="bi bi-person-badge me-2 text-primary"></i> My Profile
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'my_attendance' %}" class="nav-link text-dark py-2 px-3 rounded">
+                        <i class="bi bi-clock-history me-2 text-primary"></i> My Attendance
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'leave_apply' %}" class="nav-link text-dark py-2 px-3 rounded">
+                        <i class="bi bi-calendar2-plus me-2 text-primary"></i> Apply Leave
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'my_salary' %}" class="nav-link text-dark py-2 px-3 rounded">
+                        <i class="bi bi-receipt me-2 text-primary"></i> My Payslips
+                    </a>
+                </li>
+            {% endif %}
+
+            <li class="nav-item">
+                <a href="{% url 'notification_list' %}" class="nav-link text-dark py-2 px-3 rounded">
+                    <i class="bi bi-bell me-2 text-primary"></i> Notifications
+                </a>
+            </li>
+        {% endif %}
+    </ul>
+</div>

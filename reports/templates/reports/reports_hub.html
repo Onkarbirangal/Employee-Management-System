@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+{% block title %}Executive Reports - EMS Portal{% endblock %}
+
+{% block content %}
+<div class="container-fluid p-0">
+    <div class="d-flex justify-content-between align-items-center pb-3 mb-4 border-bottom">
+        <div>
+            <h3 class="fw-bold mb-1">Organizational Analytics & Reports</h3>
+            <p class="text-muted small mb-0">Aggregate workforce distribution, attendance rate, and payroll liabilities</p>
+        </div>
+        <button onclick="window.print()" class="btn btn-outline-secondary btn-sm">
+            <i class="bi bi-printer me-1"></i>Print Report
+        </button>
+    </div>
+
+    <!-- Attendance Performance Banner -->
+    <div class="card shadow-sm border-0 mb-4 bg-primary text-white">
+        <div class="card-body p-4 d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+            <div>
+                <h5 class="fw-bold mb-1">Today's Workforce Attendance Rate</h5>
+                <p class="text-white-50 small mb-0">{{ present_today }} out of {{ total_active_staff }} active employees present today</p>
+            </div>
+            <div class="display-5 fw-bold">{{ attendance_rate }}%</div>
+        </div>
+    </div>
+
+    <div class="row g-4 mb-4">
+        <!-- Department Distribution -->
+        <div class="col-lg-6">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-header bg-white py-3">
+                    <h6 class="fw-bold mb-0 text-dark"><i class="bi bi-people me-2 text-primary"></i>Workforce by Department</h6>
+                </div>
+                <div class="card-body p-0">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th class="ps-3">Department</th>
+                                <th class="text-end pe-3">Employees</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for dept in dept_distribution %}
+                            <tr>
+                                <td class="ps-3 fw-semibold">{{ dept.name }}</td>
+                                <td class="text-end pe-3">
+                                    <span class="badge bg-primary-subtle text-primary fs-6">{{ dept.staff_count }}</span>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr><td colspan="2" class="text-center text-muted py-3">No department data recorded</td></tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Leave Requests by Category -->
+        <div class="col-lg-6">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-header bg-white py-3">
+                    <h6 class="fw-bold mb-0 text-dark"><i class="bi bi-calendar2-week me-2 text-warning"></i>Leave Types Taken</h6>
+                </div>
+                <div class="card-body p-0">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th class="ps-3">Category</th>
+                                <th class="text-end pe-3">Total Requests</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in leave_stats %}
+                            <tr>
+                                <td class="ps-3 fw-semibold">{{ item.leave_type }}</td>
+                                <td class="text-end pe-3">
+                                    <span class="badge bg-secondary-subtle text-dark fs-6">{{ item.total_requests }}</span>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr><td colspan="2" class="text-center text-muted py-3">No leave data available</td></tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Department Payroll Allocation -->
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+            <h6 class="fw-bold mb-0 text-dark"><i class="bi bi-cash-coin me-2 text-success"></i>Yearly Compensation by Department ({{ current_year }})</h6>
+            <span class="text-muted small">Total Disbursed: <strong>₹{{ total_yearly_payroll|floatformat:2 }}</strong></span>
+        </div>
+        <div class="card-body p-0">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th class="ps-3">Department</th>
+                        <th class="text-end pe-3">Cumulative Payroll</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in dept_payroll %}
+                    <tr>
+                        <td class="ps-3 fw-semibold">{{ item.name }}</td>
+                        <td class="text-end pe-3 fw-bold text-success">₹{{ item.total_payroll|floatformat:2 }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="2" class="text-center text-muted py-4">No salary records generated this year</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

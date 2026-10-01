@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% block title %}Review Leave Request - EMS Portal{% endblock %}
+
+{% block content %}
+<div class="container-fluid max-w-700 p-0">
+    <div class="d-flex align-items-center justify-content-between mb-4">
+        <div>
+            <h4 class="fw-bold mb-1">Review Leave Request</h4>
+            <p class="text-muted small mb-0">Evaluate details for {{ leave.employee.full_name }}</p>
+        </div>
+        <a href="{% url 'leave_list' %}" class="btn btn-outline-secondary btn-sm">
+            <i class="bi bi-arrow-left me-1"></i>Back
+        </a>
+    </div>
+
+    <!-- Details Card -->
+    <div class="card shadow-sm border-0 mb-4">
+        <div class="card-body p-4">
+            <div class="row g-3">
+                <div class="col-sm-6">
+                    <span class="text-muted small d-block">Employee Name</span>
+                    <span class="fw-bold">{{ leave.employee.full_name }} ({{ leave.employee.employee_id }})</span>
+                </div>
+                <div class="col-sm-6">
+                    <span class="text-muted small d-block">Department</span>
+                    <span class="fw-bold">{{ leave.employee.department.name|default:"Unassigned" }}</span>
+                </div>
+                <div class="col-sm-6">
+                    <span class="text-muted small d-block">Leave Category</span>
+                    <span class="fw-bold">{{ leave.get_leave_type_display }}</span>
+                </div>
+                <div class="col-sm-6">
+                    <span class="text-muted small d-block">Span & Days</span>
+                    <span class="fw-bold">{{ leave.start_date }} to {{ leave.end_date }} ({{ leave.total_days }} days)</span>
+                </div>
+                <div class="col-12">
+                    <span class="text-muted small d-block">Applicant's Stated Reason</span>
+                    <div class="p-3 bg-light rounded mt-1 small">{{ leave.reason }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Action Form -->
+    <div class="card shadow-sm border-0">
+        <div class="card-body p-4">
+            <form method="post" novalidate>
+                {% csrf_token %}
+
+                {% if form.non_field_errors %}
+                    <div class="alert alert-danger py-2 small mb-3">
+                        {{ form.non_field_errors|striptags }}
+                    </div>
+                {% endif %}
+
+                <div class="mb-3">
+                    <label class="form-label fw-semibold required">Select Decision Status</label>
+                    {{ form.status }}
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Rejection Reason (Required if rejected)</label>
+                    {{ form.rejection_reason }}
+                    {% if form.rejection_reason.errors %}<div class="text-danger small mt-1">{{ form.rejection_reason.errors|striptags }}</div>{% endif %}
+                </div>
+
+                <div class="d-flex justify-content-end gap-2 pt-3 border-top">
+                    <a href="{% url 'leave_list' %}" class="btn btn-light px-4">Cancel</a>
+                    <button type="submit" class="btn btn-primary px-4">Submit Decision</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

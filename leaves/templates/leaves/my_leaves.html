@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% block title %}My Leaves - EMS Portal{% endblock %}
+
+{% block content %}
+<div class="container-fluid p-0">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center pb-3 mb-4 border-bottom gap-2">
+        <div>
+            <h3 class="fw-bold mb-1">My Leave Applications</h3>
+            <p class="text-muted small mb-0">Track application statuses and historical approvals</p>
+        </div>
+        <a href="{% url 'leave_apply' %}" class="btn btn-primary btn-sm">
+            <i class="bi bi-calendar-plus me-1"></i>Apply for Leave
+        </a>
+    </div>
+
+    <!-- Stats -->
+    <div class="row g-3 mb-4">
+        <div class="col-sm-4">
+            <div class="card card-stat shadow-sm border-0" style="border-left-color: #ffc107 !important;">
+                <div class="card-body">
+                    <span class="text-muted text-uppercase fw-semibold small">Pending</span>
+                    <h3 class="fw-bold my-1 text-dark">{{ pending_count }}</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="card card-stat shadow-sm border-0" style="border-left-color: #198754 !important;">
+                <div class="card-body">
+                    <span class="text-muted text-uppercase fw-semibold small">Approved</span>
+                    <h3 class="fw-bold my-1 text-success">{{ approved_count }}</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="card card-stat shadow-sm border-0" style="border-left-color: #dc3545 !important;">
+                <div class="card-body">
+                    <span class="text-muted text-uppercase fw-semibold small">Rejected</span>
+                    <h3 class="fw-bold my-1 text-danger">{{ rejected_count }}</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Table -->
+    <div class="card shadow-sm border-0">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th class="ps-4">Type</th>
+                            <th>Date Range</th>
+                            <th>Total Days</th>
+                            <th>Reason</th>
+                            <th>Status</th>
+                            <th>Applied Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for leave in page_obj %}
+                        <tr>
+                            <td class="ps-4 fw-bold text-dark">{{ leave.get_leave_type_display }}</td>
+                            <td>{{ leave.start_date|date:"M d, Y" }} &rarr; {{ leave.end_date|date:"M d, Y" }}</td>
+                            <td>{{ leave.total_days }} day(s)</td>
+                            <td class="small text-muted" style="max-width: 250px;">{{ leave.reason|truncatewords:10 }}</td>
+                            <td>
+                                {% if leave.status == 'APPROVED' %}
+                                    <span class="badge bg-success-subtle text-success">Approved</span>
+                                {% elif leave.status == 'REJECTED' %}
+                                    <span class="badge bg-danger-subtle text-danger" title="{{ leave.rejection_reason }}">Rejected</span>
+                                {% else %}
+                                    <span class="badge bg-warning-subtle text-warning">Pending</span>
+                                {% endif %}
+                            </td>
+                            <td class="text-muted small">{{ leave.applied_at|date:"M d, Y" }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" class="text-center py-5 text-muted">
+                                You haven't submitted any leave requests yet.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

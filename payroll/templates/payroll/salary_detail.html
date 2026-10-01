@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+{% block title %}Payslip #{{ salary.pk }} - EMS Portal{% endblock %}
+
+{% block extra_css %}
+<style>
+    @media print {
+        body { background-color: #ffffff !important; }
+        .sidebar-wrapper, .navbar, footer, .btn-print, .no-print { display: none !important; }
+        .card { border: none !important; box-shadow: none !important; }
+        .payslip-box { border: 1px solid #333 !important; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid max-w-800 p-0">
+    <div class="d-flex justify-content-between align-items-center mb-4 no-print">
+        <a href="javascript:history.back()" class="btn btn-outline-secondary btn-sm">
+            <i class="bi bi-arrow-left me-1"></i>Back
+        </a>
+        <button onclick="window.print()" class="btn btn-primary btn-sm btn-print">
+            <i class="bi bi-printer me-1"></i>Print Payslip
+        </button>
+    </div>
+
+    <!-- Official Corporate Payslip -->
+    <div class="card shadow-sm border p-4 bg-white payslip-box">
+        <div class="border-bottom pb-3 mb-4">
+            <div class="row align-items-center">
+                <div class="col-8">
+                    <h4 class="fw-bold mb-0 text-dark">ENTERPRISE SOLUTIONS INC.</h4>
+                    <p class="text-muted small mb-0">Salary Statement for {{ salary.month }}/{{ salary.year }}</p>
+                </div>
+                <div class="col-4 text-end">
+                    <span class="badge bg-success-subtle text-success fs-6 px-3 py-2 border border-success">
+                        {{ salary.payment_status }}
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-3 mb-4 pb-3 border-bottom">
+            <div class="col-sm-6">
+                <span class="text-muted small d-block">Employee Name</span>
+                <span class="fw-bold">{{ salary.employee.full_name }}</span>
+            </div>
+            <div class="col-sm-6">
+                <span class="text-muted small d-block">Employee ID</span>
+                <span class="fw-bold">{{ salary.employee.employee_id }}</span>
+            </div>
+            <div class="col-sm-6">
+                <span class="text-muted small d-block">Department</span>
+                <span>{{ salary.employee.department.name|default:"General" }}</span>
+            </div>
+            <div class="col-sm-6">
+                <span class="text-muted small d-block">Designation</span>
+                <span>{{ salary.employee.designation.title|default:"Staff" }}</span>
+            </div>
+        </div>
+
+        <!-- Earnings vs Deductions Table -->
+        <div class="table-responsive mb-4">
+            <table class="table table-bordered">
+                <thead class="table-light">
+                    <tr>
+                        <th>Earnings</th>
+                        <th class="text-end">Amount (₹)</th>
+                        <th>Deductions</th>
+                        <th class="text-end">Amount (₹)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Basic Salary</td>
+                        <td class="text-end">{{ salary.basic_salary|floatformat:2 }}</td>
+                        <td>Provident Fund & Taxes</td>
+                        <td class="text-end">{{ salary.deduction|floatformat:2 }}</td>
+                    </tr>
+                    <tr>
+                        <td>Special Allowances</td>
+                        <td class="text-end">{{ salary.allowance|floatformat:2 }}</td>
+                        <td>-</td>
+                        <td class="text-end">-</td>
+                    </tr>
+                    <tr>
+                        <td>Performance Bonus</td>
+                        <td class="text-end">{{ salary.bonus|floatformat:2 }}</td>
+                        <td>-</td>
+                        <td class="text-end">-</td>
+                    </tr>
+                </tbody>
+                <tfoot class="table-light fw-bold">
+                    <tr>
+                        <td>Gross Earnings</td>
+                        <td class="text-end text-success">₹{{ salary.basic_salary|add:salary.allowance|add:salary.bonus|floatformat:2 }}</td>
+                        <td>Total Deductions</td>
+                        <td class="text-end text-danger">₹{{ salary.deduction|floatformat:2 }}</td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+
+        <!-- Net Amount Highlight Card -->
+        <div class="p-3 bg-light rounded text-center mb-4 border">
+            <span class="text-muted small text-uppercase fw-semibold d-block">Net Disbursed Take-Home Salary</span>
+            <h2 class="fw-bold text-primary my-1">₹{{ salary.net_salary|floatformat:2 }}</h2>
+            <span class="text-muted small">Disbursement Date: {{ salary.payment_date|date:"F d, Y"|default:"Pending" }}</span>
+        </div>
+
+        <div class="row pt-4 text-center mt-3 border-top">
+            <div class="col-6">
+                <div class="text-muted small mb-4">Employee Signature</div>
+                <div class="border-top mx-auto" style="width: 140px;"></div>
+            </div>
+            <div class="col-6">
+                <div class="text-muted small mb-4">Authorized HR Representative</div>
+                <div class="border-top mx-auto" style="width: 140px;"></div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

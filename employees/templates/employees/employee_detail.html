@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+{% block title %}{{ employee.full_name }} - Profile{% endblock %}
+
+{% block content %}
+<div class="container-fluid p-0">
+    <!-- Action Bar -->
+    <div class="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom">
+        <div>
+            <h4 class="fw-bold mb-1">Employee Profile</h4>
+            <p class="text-muted small mb-0">Record details for {{ employee.employee_id }}</p>
+        </div>
+        <div class="d-flex gap-2">
+            <a href="{% url 'employee_list' %}" class="btn btn-outline-secondary btn-sm">
+                <i class="bi bi-arrow-left me-1"></i>Directory
+            </a>
+            {% if user.is_superuser or user.employee.role in 'ADMIN,HR' %}
+            <a href="{% url 'employee_edit' employee.pk %}" class="btn btn-primary btn-sm">
+                <i class="bi bi-pencil me-1"></i>Edit Profile
+            </a>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- Left: Avatar Card -->
+        <div class="col-lg-4">
+            <div class="card shadow-sm border-0 text-center p-4">
+                <div class="card-body p-0">
+                    <div class="mb-3">
+                        {% if employee.profile_picture %}
+                            <img src="{{ employee.profile_picture.url }}" class="avatar-preview shadow-sm" alt="{{ employee.full_name }}">
+                        {% else %}
+                            {% load static %}
+                            <img src="{% static 'images/default-avatar.svg' %}" class="avatar-preview shadow-sm" alt="Default Avatar">
+                        {% endif %}
+                    </div>
+                    <h5 class="fw-bold mb-1">{{ employee.full_name }}</h5>
+                    <p class="text-muted small mb-2">{{ employee.designation.title|default:"Staff" }}</p>
+                    <div class="d-flex justify-content-center gap-2 mb-3">
+                        <span class="badge bg-primary-subtle text-primary">{{ employee.role }}</span>
+                        {% if employee.status == 'ACTIVE' %}
+                            <span class="badge bg-success-subtle text-success">Active</span>
+                        {% else %}
+                            <span class="badge bg-danger-subtle text-danger">Inactive</span>
+                        {% endif %}
+                    </div>
+                    <hr class="my-3">
+                    <div class="text-start small">
+                        <div class="mb-2"><i class="bi bi-envelope text-muted me-2"></i>{{ employee.email }}</div>
+                        <div class="mb-2"><i class="bi bi-telephone text-muted me-2"></i>{{ employee.phone|default:"No phone registered" }}</div>
+                        <div><i class="bi bi-geo-alt text-muted me-2"></i>{{ employee.address|default:"No address registered" }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right: Detail Tabs / Card -->
+        <div class="col-lg-8">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-header bg-white py-3">
+                    <h6 class="fw-bold mb-0 text-dark"><i class="bi bi-info-circle me-2 text-primary"></i>Employment & Personal Info</h6>
+                </div>
+                <div class="card-body p-4">
+                    <div class="row g-3">
+                        <div class="col-sm-6">
+                            <span class="text-muted small d-block">Employee ID</span>
+                            <span class="fw-bold">{{ employee.employee_id }}</span>
+                        </div>
+                        <div class="col-sm-6">
+                            <span class="text-muted small d-block">Department</span>
+                            <span class="fw-bold">{{ employee.department.name|default:"Unassigned" }}</span>
+                        </div>
+                        <div class="col-sm-6">
+                            <span class="text-muted small d-block">Designation</span>
+                            <span class="fw-bold">{{ employee.designation.title|default:"Unassigned" }}</span>
+                        </div>
+                        <div class="col-sm-6">
+                            <span class="text-muted small d-block">Joining Date</span>
+                            <span class="fw-bold">{{ employee.joining_date|date:"F d, Y"|default:"Not recorded" }}</span>
+                        </div>
+                        <div class="col-sm-6">
+                            <span class="text-muted small d-block">Date of Birth</span>
+                            <span class="fw-bold">{{ employee.date_of_birth|date:"F d, Y"|default:"Not recorded" }}</span>
+                        </div>
+                        <div class="col-sm-6">
+                            <span class="text-muted small d-block">Gender</span>
+                            <span class="fw-bold">{{ employee.get_gender_display }}</span>
+                        </div>
+                        {% if user.is_superuser or user.employee.role in 'ADMIN,HR' %}
+                        <div class="col-sm-6">
+                            <span class="text-muted small d-block">Basic Monthly Salary</span>
+                            <span class="fw-bold text-success">₹{{ employee.basic_salary|floatformat:2 }}</span>
+                        </div>
+                        {% endif %}
+                        <div class="col-sm-6">
+                            <span class="text-muted small d-block">Profile Created</span>
+                            <span class="fw-bold">{{ employee.created_at|date:"M d, Y" }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
